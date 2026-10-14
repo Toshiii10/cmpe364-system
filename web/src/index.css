@@ -240,3 +240,134 @@ body {
   .toolbar { flex-direction: column; }
   .search-input { max-width: 100%; }
 }
+
+/* Multi-field Enterprise Form Additions */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.input-group label, .edit-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.enterprise-form textarea,
+.edit-form textarea,
+.edit-form input,
+.edit-form select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #f8fafc;
+  resize: vertical;
+}
+
+.enterprise-form textarea:focus,
+.edit-form textarea:focus,
+.edit-form input:focus,
+.edit-form select:focus {
+  outline: none;
+  background: var(--surface);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-footer .btn-primary {
+  padding: 0.7rem 1.5rem;
+}
+
+/* Card Details & Inline Edit Styles */
+.badge-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.concern-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 0.15rem 0.55rem;
+  border-radius: 6px;
+}
+
+.record-desc {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  background: #f8fafc;
+  padding: 0.65rem 0.8rem;
+  border-radius: 6px;
+  border-left: 3px solid var(--border);
+  white-space: pre-wrap;
+}
+
+.record-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: auto;
+  padding-top: 0.25rem;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.edit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.btn-save {
+  flex: 1;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-save:hover { background: var(--primary-hover); }
+
+.alert-error {
+  background: #fef2f2;
+  color: var(--danger);
+  border: 1px solid #fecaca;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .form-grid, .edit-row { grid-template-columns: 1fr; }
+}
