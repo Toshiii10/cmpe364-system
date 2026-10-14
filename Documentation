@@ -1,0 +1,1 @@
+future API contract for Flask (e.g., GET /api/records, POST /api/records), keeping the JSON shape to id, title, and status. 10/14/26
