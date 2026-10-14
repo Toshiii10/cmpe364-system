@@ -42,6 +42,15 @@ def create_record():
         db.commit()
         db.refresh(item)
         return record_to_dict(item), 201
-
+    
+@app.delete("/api/records/<int:record_id>")
+def delete_record(record_id):
+    with SessionLocal() as db:
+        item = db.get(Record, record_id)
+        if item:
+            db.delete(item)
+            db.commit()
+        return {"message": "Record deleted"}, 200
+    
 if __name__ == '__main__':
     app.run(debug=True)
