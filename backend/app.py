@@ -1,9 +1,11 @@
-from flask import Flask, request
+import os
+from flask import Flask, request, send_from_directory
 from sqlalchemy import select
 from database import Base, SessionLocal, engine
 from models import Record
 
-app = Flask(__name__)
+# Point Flask to the React build folder
+app = Flask(__name__, static_folder="../web/dist")
 
 Base.metadata.create_all(engine)
 
@@ -21,9 +23,7 @@ def health():
 @app.get("/api/records")
 def list_records():
     with SessionLocal() as db:
-        items = db.scalars(
-            select(Record).order_by(Record.id)
-        ).all()
+        items = db.scalars(select(Record).order_by(Record.id)).all()
         return [record_to_dict(item) for item in items]
 
 @app.post("/api/records")
@@ -42,6 +42,15 @@ def create_record():
         db.commit()
         db.refresh(item)
         return record_to_dict(item), 201
+
+# Catch-all route to serve the React app
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve_react(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
