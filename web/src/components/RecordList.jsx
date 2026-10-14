@@ -1,6 +1,6 @@
 import RecordCard from "./RecordCard.jsx";
 
-export default function RecordList({ records, onDelete, onToggleStatus }) {
+export default function RecordList({ records, onDelete, onUpdate }) {
   if (records.length === 0) {
     return (
       <div className="empty-state">
@@ -16,7 +16,7 @@ export default function RecordList({ records, onDelete, onToggleStatus }) {
           key={record.id}
           record={record}
           onDelete={onDelete}
-          onToggleStatus={onToggleStatus}
+          onUpdate={onUpdate}
         />
       ))}
     </section>

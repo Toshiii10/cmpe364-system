@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import RecordForm from "../components/RecordForm.jsx";
 import RecordList from "../components/RecordList.jsx";
-import { createRecord, getRecords } from "../services/recordsApi.js";
+import {
+  createRecord,
+  deleteRecordApi,
+  getRecords,
+  updateRecord,
+} from "../services/recordsApi.js";
 
 export default function RecordsPage() {
   const [records, setRecords] = useState([]);
@@ -40,27 +45,39 @@ export default function RecordsPage() {
     }
   }
 
-  function deleteRecord(id) {
-    setRecords((current) => current.filter((record) => record.id !== id));
+  async function handleUpdateRecord(id, updatedFields) {
+    setApiError("");
+    try {
+      const savedRecord = await updateRecord(id, updatedFields);
+      setRecords((current) =>
+        current.map((rec) => (rec.id === id ? savedRecord : rec))
+      );
+    } catch (error) {
+      setApiError(error.message);
+    }
   }
 
-  function toggleRecordStatus(id) {
-    setRecords((current) =>
-      current.map((rec) =>
-        rec.id === id
-          ? { ...rec, status: rec.status === "open" ? "closed" : "open" }
-          : rec
-      )
-    );
+  async function handleDeleteRecord(id) {
+    setApiError("");
+    try {
+      await deleteRecordApi(id);
+      setRecords((current) => current.filter((record) => record.id !== id));
+    } catch (error) {
+      setApiError(error.message);
+    }
   }
 
-  // Computed metrics and filtered list
   const totalCount = records.length;
   const openCount = records.filter((r) => r.status === "open").length;
   const closedCount = records.filter((r) => r.status === "closed").length;
 
   const filteredRecords = records.filter((rec) => {
-    const matchesSearch = rec.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const query = searchQuery.toLowerCase();
+    const matchesSearch =
+      rec.title.toLowerCase().includes(query) ||
+      (rec.requester_name && rec.requester_name.toLowerCase().includes(query)) ||
+      (rec.concern && rec.concern.toLowerCase().includes(query)) ||
+      (rec.description && rec.description.toLowerCase().includes(query));
     const matchesStatus = statusFilter === "all" || rec.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -93,7 +110,6 @@ export default function RecordsPage() {
         </button>
       </header>
 
-      {/* KPI Stats Row */}
       <div className="kpi-grid">
         <div className="kpi-card">
           <span className="kpi-label">Total Records</span>
@@ -113,12 +129,11 @@ export default function RecordsPage() {
 
       {apiError && <p role="alert" className="alert-error">{apiError}</p>}
 
-      {/* Filter & Search Toolbar */}
       <div className="toolbar">
         <input
           type="search"
           className="search-input"
-          placeholder="Search records by title..."
+          placeholder="Search by title, name, concern, or details...."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -138,8 +153,8 @@ export default function RecordsPage() {
 
       <RecordList
         records={filteredRecords}
-        onDelete={deleteRecord}
-        onToggleStatus={toggleRecordStatus}
+        onDelete={handleDeleteRecord}
+        onUpdate={handleUpdateRecord}
       />
     </main>
   );

@@ -2,6 +2,9 @@ import { useState } from "react";
 
 export default function RecordForm({ onAdd }) {
   const [title, setTitle] = useState("");
+  const [requesterName, setRequesterName] = useState("");
+  const [concern, setConcern] = useState("Technical Issue");
+  const [description, setDescription] = useState("");
   const [status, setStatus] = useState("open");
 
   function handleSubmit(event) {
@@ -9,8 +12,18 @@ export default function RecordForm({ onAdd }) {
     const cleanTitle = title.trim();
     if (!cleanTitle) return;
 
-    onAdd({ title: cleanTitle, status });
+    onAdd({
+      title: cleanTitle,
+      requester_name: requesterName.trim() || "Anonymous",
+      concern,
+      description: description.trim(),
+      status,
+    });
+
     setTitle("");
+    setRequesterName("");
+    setConcern("Technical Issue");
+    setDescription("");
     setStatus("open");
   }
 
@@ -20,31 +33,74 @@ export default function RecordForm({ onAdd }) {
         <span className="form-title">Create New Record</span>
         <span className="char-counter">{title.length}/120</span>
       </div>
-      <div className="form-row">
-        <div className="input-wrapper">
-          <label htmlFor="record-title" className="sr-only">Title</label>
+
+      <div className="form-grid">
+        <div className="input-group">
+          <label htmlFor="req-name">Name</label>
           <input
-            id="record-title"
+            id="req-name"
             type="text"
-            maxLength={120}
-            placeholder="Enter record title or task description..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g., Juan Dela Cruz"
+            value={requesterName}
+            onChange={(e) => setRequesterName(e.target.value)}
           />
         </div>
-        <div className="select-wrapper">
-          <label htmlFor="record-status" className="sr-only">Status</label>
+
+        <div className="input-group">
+          <label htmlFor="req-concern">Concern Category</label>
+          <select
+            id="req-concern"
+            value={concern}
+            onChange={(e) => setConcern(e.target.value)}
+          >
+            <option value="Technical Issue"> Technical Issue</option>
+            <option value="Account & Access"> Account & Access</option>
+            <option value="Hardware / Lab"> Hardware / Lab</option>
+            <option value="Feature Request"> Feature Request</option>
+            <option value="General Inquiry"> General Inquiry</option>
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="record-status">Initial Status</label>
           <select
             id="record-status"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option value="open">Open</option>
-            <option value="closed">Closed</option>
+            <option value="open"> Open</option>
+            <option value="closed"> Closed</option>
           </select>
         </div>
+      </div>
+
+      <div className="input-group">
+        <label htmlFor="record-title">Subject / Title </label>
+        <input
+          id="record-title"
+          type="text"
+          maxLength={120}
+          required
+          placeholder="Brief summary of the issue or record..."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </div>
+
+      <div className="input-group">
+        <label htmlFor="record-desc">Detailed Description</label>
+        <textarea
+          id="record-desc"
+          rows={3}
+          placeholder="Provide additional context, steps to reproduce, or notes..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+
+      <div className="form-footer">
         <button type="submit" className="btn-primary" disabled={!title.trim()}>
-          Add Record
+           Submit Record
         </button>
       </div>
     </form>
