@@ -12,30 +12,11 @@ export async function createRecord(payload) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+  const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(`Could not create record (${response.status})`);
+    const error = new Error(data.error || `Could not create record (${response.status})`);
+    error.fieldErrors = data.errors || null;
+    throw error;
   }
-  return response.json();
-}
-
-export async function updateRecord(id, payload) {
-  const response = await fetch(`/api/records/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) {
-    throw new Error(`Could not update record (${response.status})`);
-  }
-  return response.json();
-}
-
-export async function deleteRecordApi(id) {
-  const response = await fetch(`/api/records/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error(`Could not delete record (${response.status})`);
-  }
-  return response.json();
+  return data;
 }
