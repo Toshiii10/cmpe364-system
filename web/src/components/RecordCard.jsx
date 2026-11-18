@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-export default function RecordCard({ record, onDelete, onUpdate }) {
+export default function RecordCard({
+  record,
+  canModify,
+  onToggleStatus,
+  onUpdate,
+  onDelete,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(record.title);
   const [editName, setEditName] = useState(record.requester_name || "");
@@ -12,16 +18,18 @@ export default function RecordCard({ record, onDelete, onUpdate }) {
 
   async function handleSave(e) {
     e.preventDefault();
-    if (!editTitle.trim()) return;
+    if (!onUpdate) return;
 
-    await onUpdate(record.id, {
+    const ok = await onUpdate(record.id, {
       title: editTitle.trim(),
       requester_name: editName.trim() || "Anonymous",
       concern: editConcern,
       description: editDesc.trim(),
       status: editStatus,
     });
-    setIsEditing(false);
+    if (ok) {
+      setIsEditing(false);
+    }
   }
 
   function handleCancel() {
@@ -31,6 +39,17 @@ export default function RecordCard({ record, onDelete, onUpdate }) {
     setEditDesc(record.description || "");
     setEditStatus(record.status);
     setIsEditing(false);
+  }
+
+  function handleToggle() {
+    if (onToggleStatus) {
+      onToggleStatus(record);
+    } else if (onUpdate) {
+      onUpdate(record.id, {
+        title: record.title,
+        status: isClosed ? "open" : "closed",
+      });
+    }
   }
 
   if (isEditing) {
@@ -47,7 +66,6 @@ export default function RecordCard({ record, onDelete, onUpdate }) {
               type="text"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
-              required
             />
           </label>
 
@@ -91,8 +109,12 @@ export default function RecordCard({ record, onDelete, onUpdate }) {
           </label>
 
           <div className="card-actions">
-            <button type="submit" className="btn-save">Save</button>
-            <button type="button" className="btn-secondary" onClick={handleCancel}>Cancel</button>
+            <button type="submit" className="btn-save" disabled={!canModify}>
+              Save
+            </button>
+            <button type="button" className="btn-secondary" onClick={handleCancel}>
+              Cancel
+            </button>
           </div>
         </form>
       </article>
@@ -113,34 +135,37 @@ export default function RecordCard({ record, onDelete, onUpdate }) {
 
       <h2 className="record-title">{record.title}</h2>
 
-      {record.description && (
-        <p className="record-desc">{record.description}</p>
-      )}
+      {record.description && <p className="record-desc">{record.description}</p>}
 
       <div className="record-meta">
-        <span><strong>{record.requester_name || "Anonymous"}</strong></span>
+        <span>
+          <strong>{record.requester_name || "Anonymous"}</strong>
+        </span>
       </div>
 
       <div className="card-actions">
+        {onUpdate && (
+          <button
+            type="button"
+            className="btn-secondary"
+            disabled={!canModify}
+            onClick={() => setIsEditing(true)}
+          >
+            Edit
+          </button>
+        )}
         <button
           type="button"
           className="btn-secondary"
-          onClick={() => setIsEditing(true)}
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={() =>
-            onUpdate(record.id, { status: isClosed ? "open" : "closed" })
-          }
+          disabled={!canModify}
+          onClick={handleToggle}
         >
           {isClosed ? "Reopen" : "Resolve"}
         </button>
         <button
           type="button"
           className="btn-danger"
+          disabled={!canModify}
           onClick={() => onDelete(record.id)}
         >
           Delete

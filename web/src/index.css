@@ -371,3 +371,4 @@ body {
 @media (max-width: 640px) {
   .form-grid, .edit-row { grid-template-columns: 1fr; }
 }
+
