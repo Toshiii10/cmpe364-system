@@ -1,46 +1,61 @@
 import { useState } from "react";
 
-export default function LoginForm({ username, onLogin, onLogout, authError }) {
-  const [inputUser, setInputUser] = useState("");
-  const [inputPass, setInputPass] = useState("");
+export default function LoginForm({ currentUser, onLogin, onLogout }) {
+  const [username, setUsername] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [error, setError] = useState("");
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const ok = await onLogin(inputUser.trim(), inputPass);
-    if (ok) {
-      setInputUser("");
-      setInputPass("");
-    }
-  }
-
-  if (username) {
+  if (currentUser) {
     return (
-      <section>
-        <p>Logged in as: <strong>{username}</strong></p>
-        <button type="button" onClick={onLogout}>Logout</button>
-      </section>
+      <div className="session-banner">
+        <p>
+          Logged in as: <strong>{currentUser}</strong>
+        </p>
+        <button type="button" onClick={onLogout}>
+          Logout
+        </button>
+      </div>
     );
   }
 
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError("");
+    try {
+      await onLogin({ username, password: pwd });
+      setUsername("");
+      setPwd("");
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="login-form">
+      <h3>Login</h3>
+      {error && (
+        <p role="alert" className="error-msg">
+          {error}
+        </p>
+      )}
       <label>
-        Username{" "}
+        Username:
         <input
-          value={inputUser}
-          onChange={(e) => setInputUser(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
         />
       </label>
       <label>
-        Password{" "}
+        Password:
         <input
           type="password"
-          value={inputPass}
-          onChange={(e) => setInputPass(e.target.value)}
+          value={pwd}
+          onChange={(e) => setPwd(e.target.value)}
+          required
         />
       </label>
       <button type="submit">Login</button>
-      {authError && <p role="alert" style={{ color: "red" }}>{authError}</p>}
     </form>
   );
 }

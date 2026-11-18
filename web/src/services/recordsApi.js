@@ -20,3 +20,29 @@ export async function createRecord(payload) {
   }
   return data;
 }
+
+export async function updateRecordApi(id, payload) {
+  const response = await fetch(`/api/records/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(data.error || `Could not update record (${response.status})`);
+    error.fieldErrors = data.errors || null;
+    throw error;
+  }
+  return data;
+}
+
+export async function deleteRecordApi(id) {
+  const response = await fetch(`/api/records/${id}`, {
+    method: "DELETE",
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || `Could not delete record (${response.status})`);
+  }
+  return data;
+}

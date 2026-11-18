@@ -9,11 +9,9 @@ export default function RecordForm({ onAdd }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    const cleanTitle = title.trim();
-    if (!cleanTitle) return;
 
     onAdd({
-      title: cleanTitle,
+      title: title.trim(),
       requester_name: requesterName.trim() || "Anonymous",
       concern,
       description: description.trim(),
@@ -53,11 +51,11 @@ export default function RecordForm({ onAdd }) {
             value={concern}
             onChange={(e) => setConcern(e.target.value)}
           >
-            <option value="Technical Issue"> Technical Issue</option>
-            <option value="Account & Access"> Account & Access</option>
-            <option value="Hardware / Lab"> Hardware / Lab</option>
-            <option value="Feature Request"> Feature Request</option>
-            <option value="General Inquiry"> General Inquiry</option>
+            <option value="Technical Issue">Technical Issue</option>
+            <option value="Account & Access">Account & Access</option>
+            <option value="Hardware / Lab">Hardware / Lab</option>
+            <option value="Feature Request">Feature Request</option>
+            <option value="General Inquiry">General Inquiry</option>
           </select>
         </div>
 
@@ -68,19 +66,18 @@ export default function RecordForm({ onAdd }) {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option value="open"> Open</option>
-            <option value="closed"> Closed</option>
+            <option value="open">Open</option>
+            <option value="closed">Closed</option>
           </select>
         </div>
       </div>
 
       <div className="input-group">
-        <label htmlFor="record-title">Subject / Title </label>
+        <label htmlFor="record-title">Subject / Title</label>
         <input
           id="record-title"
           type="text"
           maxLength={120}
-          required
           placeholder="Brief summary of the issue or record..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -99,8 +96,8 @@ export default function RecordForm({ onAdd }) {
       </div>
 
       <div className="form-footer">
-        <button type="submit" className="btn-primary" disabled={!title.trim()}>
-           Submit Record
+        <button type="submit" className="btn-primary">
+          Submit Record
         </button>
       </div>
     </form>
