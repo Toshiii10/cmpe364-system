@@ -4,6 +4,7 @@ mobile/node_modules/
 web/dist/
 mobile/.expo/
 # Python environment and cache
+backend/instance/*.db
 backend/.venv/
 **/__pycache__/
 *.pyc
